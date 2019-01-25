@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="//layui.hcwl520.com.cn/layui/css/layui.css?v=201809030202" type="text/css">
+<script src="//layui.hcwl520.com.cn/layui/layui.js?v=201809030202"></script>
+<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.min.js"></script>
+
+<style>
+body { padding: 20px; }
+#contextmenu { width: 150px; padding-bottom: 15px; position: absolute; min-width: 50px; }
+#contextmenu dd { padding-left: 15px; line-height: 28px; }
+.layui-form-item .layui-form-checkbox[lay-skin=primary] { margin-top: 5px; }
+.ui-sortable-helper { background-color: #fff; }
+#layer { display: none; }
+.layui-table-page { text-align: right; }
+.laytable-cell-1-city { overflow: visible; }
+.layui-table .layui-input { height: 28px; }
+</style>
+</head>
+<body>
+<script type="text/html" id="selectTpl">
+    <select lay-filter="selCity" class="selectDemo">
+	    <option value="-1">请选择城市</option>
+      {{# layui.each(d.sel, function(index, item){ }}
+          <option value="{{item}}">{{item}}</option>
+      {{# }); }}
+<!-- 	    <option value="0">北京</option>
+	    <option value="1">上海</option>
+	    <option value="2">广州</option>
+	    <option value="3">深圳</option>
+	    <option value="4">杭州</option> -->
+    </select>
+</script>
+
+<script type="text/html" id="checkboxTpl">
+  <input type="checkbox" name="lock" value="{{d.id}}" title="锁定" lay-filter="lockDemo" {{ d.id == 10006 ? 'checked' : '' }}>
+</script>
+
+<form class="layui-form">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">项目ID</label>
+            <div class="layui-inline">
+                <input type="text" name="orderId" placeholder="请输入项目ID" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">区域</label>
+            <div class="layui-inline">
+                <input type="text" name="area" placeholder="请输入区域" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <div class="layui-input-block">
+                <button id="submit" class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div id="dataTable" lay-filter="tableDemo"></div>
+
+<!-- 表头菜单容器，其中 data-loaded:{1:已加载, 2:变更后未加载} -->
+<div class="layui-form">
+    <dl class="layui-nav-child layui-form-item" id="contextmenu" data-loaded="1"></dl>
+</div>
+
+<div id="layer">
+    弹出内容
+</div>
+
+<script>
+layui.use(['table', 'element', 'form', 'layer'], function(){
+    var table = layui.table;
+    var element = layui.element;
+    var form = layui.form;
+    var layer = layui.layer;
+
+    //默认表头定义
+    var colsDef = [
+        {checkbox: true},
+        {field: 'locked', title:'是否锁定', width: 100, templet: '#checkboxTpl'},
+        {field: 'city', title:'城市', width: 200, templet: '#selectTpl', hide: true},
+        {field: 'orderId', title: '项目ID', width: 120, sort: true},
+        {field: 'projectName', title: '项目名', templet: '#titleTpl', width:300, edit: 'text'},
+        {field: 'area', title: '区域', width:200, sort: true},
+        {field: 'region', title: '领域', width:200, sort: true},
+        {field: 'department', title: '部门', width:200},
+        {field: 'position', title: '职位', width:200},
+        {field: 'reporter', title: '姓名', width: 100, edit: 'text'},
+        {field: 'phone', title: '电话', width: 160},
+        {field: 'notes', title: '备注', width: 400},
+        {field: '', title: '操作栏', width:150, toolbar: '#barDemo'},
+    ];
+
+    //拖动列排序
+    var initST = function(){
+        $(".layui-table-header tr").sortable({
+            "axis": "x",
+            "revert": true,
+            "cursor": "move",//拖拽时的鼠标图标，由于样式冲突，暂只支持IE
+            "placeholder": "ui-state-highlight",
+            "cancel": ".disable-sort",
+            "update": function (event, ui) {
+                var _ot = $(".layui-table-header tr").sortable( "toArray", { attribute: "data-field" } );
+                var colsCurr = colsDef;
+                colsCurr.sort(function(a, b){
+                    return _ot.indexOf(a.field) - _ot.indexOf(b.field);
+                });
+                tableIns.reload({ cols: [colsCurr] });
+                initST();//每次更新完毕，再次初始化自身
+            }
+        }).disableSelection();
+        $(".layui-table-header th:has(:checkbox)").addClass('disable-sort');
+
+        console.log("tableIns==", tableIns)
+    };
+
+    //表格实例
+    var tableIns = table.render({
+        elem: '#dataTable',
+        id: 'renderTable',
+        height: 500,
+        //url: 'https://easy-mock.com/mock/5a314952cc5f0f50cf1208f0/example/backend',
+        url: './mock-data/laydata.json',
+        page: true,
+        cols: [colsDef],
+        done: function() {
+            //如果右键菜单为空，则初始化右键菜单选项
+            var $cm = $('#contextmenu');
+            if($cm.children().length > 0) return;
+            $cm.append('<dd><input type="checkbox" title="全选" lay-skin="primary" lay-filter="checkAll" value="999" checked></dd>');
+            colsDef.forEach(function(item, index) {
+                var $dd = $('<dd><input type="checkbox" lay-skin="primary" lay-filter="checkItem" checked></dd>');
+                var _tit = item.title;
+                if(! _tit){_tit = "未命名列";}
+                $dd.find("input").attr('title', _tit).val(index);
+                $cm.append($dd);
+            });
+
+            //重新渲染所有表单样式（包括右键菜单选框的样式）
+            form.render();
+
+            //拖动列排序控制事件初始化
+            initST();
+
+            //滚动条默认隐藏
+            //过早隐藏滚动条，可能导致layui表头宽度计算出错
+            //但layui表格自带的渲染结束done事件，回调函数执行时居然还有表格操作未完成，只能延时执行
+            //setTimeout 0秒，相当于nextTick()
+            setTimeout(function(){
+                if($(".layui-table-patch").length == 0){//兼容IE考古浏览器的兜底操作，手动插入表头占位符
+                    var odiv = $(".layui-table-body")[0];
+                    var _sw = odiv.offsetWidth - odiv.clientWidth;
+                    var thtml = '<th class="layui-table-patch"><div class="layui-table-cell"></div></th>';
+                    $(".layui-table-header tr").append(thtml).find(".layui-table-patch div").width(_sw);
+                }
+
+                $(".layui-table-body").css("overflow", "hidden");
+            });
+
+        }
+    });
+
+    //隐藏、显示列
+    var reloadCols = function (argument) {
+        if($("#contextmenu").data("loaded") != 0) return;
+        var colsCurr = [];
+        $("#contextmenu input").each(function(i, ele) {
+            var _check = $(ele).siblings('div').hasClass('layui-form-checked');
+            var _index = $(ele).val();
+            if(_index == 999) return;
+            if(_check){
+                colsCurr.push(colsDef[_index]);
+            }
+        });
+        tableIns.reload({ cols: [colsCurr] });
+        initST();//再次初始化
+        $("#contextmenu").data("loaded", 1);
+    };
+
+    //搜索提交
+    form.on('submit(formDemo)', function(data){
+        var _f = data.field;
+        tableIns.reload({
+            where: {
+              orderId: _f.orderId,
+              area: _f.area
+            }
+        });
+        return false;
+    });
+
+    //排序操作监听
+    table.on('sort(tableDemo)', function(obj){
+        //console.log(obj)
+    });
+
+    table.on('checkbox(tableDemo)', function(obj){
+			console.log(obj.checked); //当前是否选中状态
+			console.log(obj.data); //选中行的相关数据
+			console.log(obj.type); //如果触发的是全选，则为：all，如果触发的是单选，则为：one
+			console.log(obj);
+		});
+
+    //全选操作
+    form.on('checkbox(checkAll)', function(data){
+        var $checkDiv = $('#contextmenu .layui-form-checkbox');
+        var $checkInput = $('#contextmenu :checkbox');
+        if(data.elem.checked){
+            $checkDiv.addClass('layui-form-checked');
+            $checkInput.prop("checked", true);
+            $("#contextmenu").data("loaded", 0);
+        }
+    });
+
+    //清除全选
+    form.on('checkbox(checkItem)', function(data){
+        var $checkDiv = $('#contextmenu .layui-form-checkbox:first');
+        var $checkInput = $('#contextmenu :checkbox:first');
+        if(! data.elem.checked){
+            $checkDiv.removeClass('layui-form-checked')
+            $checkInput.prop("checked", false);
+        }
+        $("#contextmenu").data("loaded", 0);
+    });
+
+    //监听select操作
+		form.on('select(selCity)', function(data){
+		  console.log(data.elem); //得到select原始DOM对象
+		  console.log(data.value); //得到被选中的值
+		  console.log(data.othis); //得到美化后的DOM对象
+		  console.log($(":selected", data.elem).text());//被选中的项的文字
+		});      
+
+    //表头右键交换
+    $(document).on('contextmenu', "th", function(e) {
+        $("#contextmenu").css({
+            top: e.clientY,
+            left: e.clientX
+        })
+        .toggle();        
+        return false;
+    });
+
+    //避免列宽调整与拖拖拽操作的冲突
+    $(document).on('mousemove', ".layui-table-header th:not(:has(:checkbox))", function(e) {
+        var $st = $(this);
+        var _cursor = $("body").css("cursor");
+        if(_cursor != "auto"){
+            $st.addClass('disable-sort');
+            return;
+        }
+        if(_cursor == "auto"){
+            $st.removeClass('disable-sort');
+        }
+    });
+
+    //别的地方有点击时，隐藏右键菜单
+    $(document).on('click', function(e) {
+        $("#contextmenu").hide();
+        reloadCols();
+    });
+
+    $("#contextmenu").on({
+        //禁止在右键菜单上显示右键菜单
+        'contextmenu': function(e) {
+            return false;
+        },
+        //鼠标移出菜单时隐藏之
+        'mouseleave': function(e) {
+            $("#contextmenu").hide();
+            reloadCols();
+        },
+        //禁止正常的菜单操作向上冒泡
+        'click': function(e) {
+            return false;
+        }
+    });
+
+    //滚动条隐显
+    $(document).on("mouseover", ".layui-table-view", function() {
+        $(".layui-table-body").css("overflow", "auto");
+    });
+    $(document).on("Mouseleave", ".layui-table-view", function() {
+        $(".layui-table-body").css("overflow", "hidden");
+    });
+
+    //点击标题弹出层
+    $(document).on("click", "td .laytable-cell-1-projectName", function(e) {
+        layer.open({
+            type: 1,
+            area: '700px',
+            content: $("#layer"),
+            title: $(e.target).text(),//通过e.target与当前点击的行关联;也可用inline方法触发弹窗并传递id
+            btnAlign: 'c',
+            btn: ['关闭']
+        });
+        return false;//禁止默认链接跳转
+    });
+
+    $(document).on("input", "td[data-field='reporter'] input", function () {
+    	var _val = $(this).val();
+    	console.log(_val, _val.length)
+    	if($(this).val().length > 5){
+    		$(this).val(_val.slice(0, -1));
+    	}
+    })
+
+    function selectDemo(a) {
+        console.log($(a).attr('data-id'));
+        console.log($(a).val());
+    }
+});
+</script>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="detail">查看</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script type="text/html" id="titleTpl">
+    <a href="/detail/{{d.id}}" class="layui-table-link">{{d.projectName}}</a>
+</script>
+</body>
+</html>
