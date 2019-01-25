@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html><head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>表格冻结测试</title>
+    <style>
+    table { table-layout: fixed; /*width: 100%; */empty-cells: show; background-color: transparent; border-collapse: collapse; border-spacing: 0; }
+    table th { text-align: left; font-weight: 400 }
+    .table th { font-weight: bold }
+    .table th,
+    .table td, .table col { padding: 8px; line-height: 20px; white-space: nowrap; }
+    .table td { text-align: left }
+    .table tbody tr.success>td { background-color: #dff0d8 }
+    .table tbody tr.error>td { background-color: #f2dede }
+    .table tbody tr.warning>td { background-color: #fcf8e3 }
+    .table tbody tr.info>td { background-color: #d9edf7 }
+    .table tbody+tbody { border-top: 2px solid #ddd }
+    .table .table { background-color: #fff }
+    .table-border { border-top: 1px solid #ddd }
+    .table-border th, .table-border td { border-bottom: 1px solid #ddd }
+    .table-bg thead th { background-color: #f5fafe }
+    .table-bordered { border: 1px solid #ddd; border-collapse: separate; *border-collapse: collapse; border-left: 0 }
+    .table-bordered th, .table-bordered td { border-left: 1px solid #ddd }
+    .table-border.table-bordered { border-bottom: 0 }
+    .table-striped tbody>tr:nth-child(odd)>td, .table-striped tbody>tr:nth-child(odd)>th { background-color: #f9f9f9 }
+    .table-condensed th, .table-condensed td { padding: 4px 5px }
+    .table-hover tbody tr:hover td, .table-hover tbody tr:hover th { background-color: #f5f5f5 }
+    .table tbody tr.selected td { background-color: #f3f3f3 }
+    .table tbody tr.active, .table tbody tr.active>td, .table tbody tr.active>th, .table tbody tr .active { background-color: #f5f5f5 !important }
+    .table tbody tr.success, .table tbody tr.success>td, .table tbody tr.success>th, .table tbody tr .success { background-color: #dff0d8 !important }
+    .table tbody tr.warning, .table tbody tr.warning>td, .table tbody tr.warning>th, .table tbody tr .warning { background-color: #fcf8e3 !important }
+    .table tbody tr.danger, .table tbody tr.danger>td, .table tbody tr.danger>th, .table tbody tr .danger { background-color: #f2dede !important }
+    .table .text-c th, .table .text-c td { text-align: center }
+    .table .text-r th, .table .text-r td { text-align: right }
+    .table th.text-l, .table td.text-l { text-align: left !important }
+    .table th.text-c, .table td.text-c { text-align: center !important }
+    .table th.text-r, .table td.text-r { text-align: right !important }
+    .fix-table { position: relative; }
+    .fix-cols { position: absolute; left: 0; border-bottom: 1px solid #ddd; overflow-y: hidden; background-color: #fff; }
+    .fix-cols-head { position: absolute; left: 0; top: 0; z-index: 10; background-color: #fff; }
+    .fix-head { position: absolute; top: 0; overflow-x: hidden; border-right: 1px solid #ddd; }
+    .fix-body { height: 550px; border-bottom: 1px solid #ddd; overflow: auto; }
+    .fix-cols table,
+    .fix-body table { margin-top: -1px; }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="fix-table">
+            <div class="fix-cols-head">
+                <table class="table table-border table-bordered table-bg">
+                    <colgroup>
+                        <col width="160" />
+                        <col width="80" />
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th colspan="2">合并、冻结的列</th>
+                        </tr>
+                        <tr>
+                            <th>Name</th>
+                            <th>Age</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="fix-cols">
+                <table class="table table-border table-bordered table-bg">
+                    <colgroup>
+                        <col width="160" />
+                        <col width="80" />
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="fix-head">
+                <table class="table table-border table-bordered table-bg">
+                    <colgroup>
+                        <col width="220" />
+                        <col width="150" />
+                        <col width="200" />
+                        <col width="500" />
+                        <col width="500" />
+                        <col width="200" />
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th colspan="2">合并的表头2</th>
+                            <th colspan="4">合并的表头4</th>
+                        </tr>
+                        <tr>
+                            <th>Another Name</th>
+                            <th>Age 2</th>
+                            <th>Gender</th>
+                            <th>Height</th>
+                            <th>Province</th>
+                            <th>Sport</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="fix-body">
+                <table class="table table-border table-bordered table-bg">
+                    <colgroup>
+                        <col width="220" />
+                        <col width="150" />
+                        <col width="200" />
+                        <col width="500" />
+                        <col width="500" />
+                        <col width="200" />
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                            <td data-th="Gender"><span class="bt-content">Female</span></td>
+                            <td data-th="Height"><span class="bt-content">5'4</span></td>
+                            <td data-th="Province"><span class="bt-content">British Columbia</span></td>
+                            <td data-th="Sport"><span class="bt-content">Volleyball</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">John Stone</span></td>
+                            <td data-th="Age"><span class="bt-content">30</span></td>
+                            <td data-th="Gender"><span class="bt-content">Male</span></td>
+                            <td data-th="Height"><span class="bt-content">5'9</span></td>
+                            <td data-th="Province"><span class="bt-content">Ontario</span></td>
+                            <td data-th="Sport"><span class="bt-content">Badminton</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jane Strip</span></td>
+                            <td data-th="Age"><span class="bt-content">29</span></td>
+                            <td data-th="Gender"><span class="bt-content">Female</span></td>
+                            <td data-th="Height"><span class="bt-content">5'6</span></td>
+                            <td data-th="Province"><span class="bt-content">Manitoba</span></td>
+                            <td data-th="Sport"><span class="bt-content">Hockey</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Gary Mountain</span></td>
+                            <td data-th="Age"><span class="bt-content">21</span></td>
+                            <td data-th="Gender"><span class="bt-content">Mail</span></td>
+                            <td data-th="Height"><span class="bt-content">5'8</span></td>
+                            <td data-th="Province"><span class="bt-content">Alberta</span></td>
+                            <td data-th="Sport"><span class="bt-content">Curling</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">James Camera</span></td>
+                            <td data-th="Age"><span class="bt-content">31</span></td>
+                            <td data-th="Gender"><span class="bt-content">Male</span></td>
+                            <td data-th="Height"><span class="bt-content">6'1</span></td>
+                            <td data-th="Province"><span class="bt-content">British Columbia</span></td>
+                            <td data-th="Sport"><span class="bt-content">Hiking</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                            <td data-th="Gender"><span class="bt-content">Female</span></td>
+                            <td data-th="Height"><span class="bt-content">5'4</span></td>
+                            <td data-th="Province"><span class="bt-content">British Columbia</span></td>
+                            <td data-th="Sport"><span class="bt-content">Volleyball</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">John Stone</span></td>
+                            <td data-th="Age"><span class="bt-content">30</span></td>
+                            <td data-th="Gender"><span class="bt-content">Male</span></td>
+                            <td data-th="Height"><span class="bt-content">5'9</span></td>
+                            <td data-th="Province"><span class="bt-content">Ontario</span></td>
+                            <td data-th="Sport"><span class="bt-content">Badminton</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jane Strip</span></td>
+                            <td data-th="Age"><span class="bt-content">29</span></td>
+                            <td data-th="Gender"><span class="bt-content">Female</span></td>
+                            <td data-th="Height"><span class="bt-content">5'6</span></td>
+                            <td data-th="Province"><span class="bt-content">Manitoba</span></td>
+                            <td data-th="Sport"><span class="bt-content">Hockey</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Gary Mountain</span></td>
+                            <td data-th="Age"><span class="bt-content">21</span></td>
+                            <td data-th="Gender"><span class="bt-content">Mail</span></td>
+                            <td data-th="Height"><span class="bt-content">5'8</span></td>
+                            <td data-th="Province"><span class="bt-content">Alberta</span></td>
+                            <td data-th="Sport"><span class="bt-content">Curling</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">James Camera</span></td>
+                            <td data-th="Age"><span class="bt-content">31</span></td>
+                            <td data-th="Gender"><span class="bt-content">Male</span></td>
+                            <td data-th="Height"><span class="bt-content">6'1</span></td>
+                            <td data-th="Province"><span class="bt-content">British Columbia</span></td>
+                            <td data-th="Sport"><span class="bt-content">Hiking</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                            <td data-th="Gender"><span class="bt-content">Female</span></td>
+                            <td data-th="Height"><span class="bt-content">5'4</span></td>
+                            <td data-th="Province"><span class="bt-content">British Columbia</span></td>
+                            <td data-th="Sport"><span class="bt-content">Volleyball</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">John Stone</span></td>
+                            <td data-th="Age"><span class="bt-content">30</span></td>
+                            <td data-th="Gender"><span class="bt-content">Male</span></td>
+                            <td data-th="Height"><span class="bt-content">5'9</span></td>
+                            <td data-th="Province"><span class="bt-content">Ontario</span></td>
+                            <td data-th="Sport"><span class="bt-content">Badminton</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jane Strip</span></td>
+                            <td data-th="Age"><span class="bt-content">29</span></td>
+                            <td data-th="Gender"><span class="bt-content">Female</span></td>
+                            <td data-th="Height"><span class="bt-content">5'6</span></td>
+                            <td data-th="Province"><span class="bt-content">Manitoba</span></td>
+                            <td data-th="Sport"><span class="bt-content">Hockey</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Gary Mountain</span></td>
+                            <td data-th="Age"><span class="bt-content">21</span></td>
+                            <td data-th="Gender"><span class="bt-content">Mail</span></td>
+                            <td data-th="Height"><span class="bt-content">5'8</span></td>
+                            <td data-th="Province"><span class="bt-content">Alberta</span></td>
+                            <td data-th="Sport"><span class="bt-content">Curling</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">James Camera</span></td>
+                            <td data-th="Age"><span class="bt-content">31</span></td>
+                            <td data-th="Gender"><span class="bt-content">Male</span></td>
+                            <td data-th="Height"><span class="bt-content">6'1</span></td>
+                            <td data-th="Province"><span class="bt-content">British Columbia</span></td>
+                            <td data-th="Sport"><span class="bt-content">Hiking</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jill Smith</span></td>
+                            <td data-th="Age"><span class="bt-content">25</span></td>
+                            <td data-th="Gender"><span class="bt-content">Female</span></td>
+                            <td data-th="Height"><span class="bt-content">5'4</span></td>
+                            <td data-th="Province"><span class="bt-content">British Columbia</span></td>
+                            <td data-th="Sport"><span class="bt-content">Volleyball</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">John Stone</span></td>
+                            <td data-th="Age"><span class="bt-content">30</span></td>
+                            <td data-th="Gender"><span class="bt-content">Male</span></td>
+                            <td data-th="Height"><span class="bt-content">5'9</span></td>
+                            <td data-th="Province"><span class="bt-content">Ontario</span></td>
+                            <td data-th="Sport"><span class="bt-content">Badminton</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Jane Strip</span></td>
+                            <td data-th="Age"><span class="bt-content">29</span></td>
+                            <td data-th="Gender"><span class="bt-content">Female</span></td>
+                            <td data-th="Height"><span class="bt-content">5'6</span></td>
+                            <td data-th="Province"><span class="bt-content">Manitoba</span></td>
+                            <td data-th="Sport"><span class="bt-content">Hockey</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">Gary Mountain</span></td>
+                            <td data-th="Age"><span class="bt-content">21</span></td>
+                            <td data-th="Gender"><span class="bt-content">Mail</span></td>
+                            <td data-th="Height"><span class="bt-content">5'8</span></td>
+                            <td data-th="Province"><span class="bt-content">Alberta</span></td>
+                            <td data-th="Sport"><span class="bt-content">Curling</span></td>
+                        </tr>
+                        <tr>
+                            <td data-th="Name"><span class="bt-content">James Camera</span></td>
+                            <td data-th="Age"><span class="bt-content">31</span></td>
+                            <td data-th="Gender"><span class="bt-content">Male</span></td>
+                            <td data-th="Height"><span class="bt-content">6'1</span></td>
+                            <td data-th="Province"><span class="bt-content">British Columbia</span></td>
+                            <td data-th="Sport"><span class="bt-content">Hiking</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="../jquery.min.js"></script>
+    <script src="jquery.fixTable.js"></script>
+    <script>
+        //$(".fix-cols-head, .fix-cols").hide();
+        $(".fix-table").initFix({"headCell": "col"});
+        $(window).on('resize', function(event) {
+            $(".fix-table").initFix({"headCell": "col"});
+        });
+    </script>
+</body></html>
